@@ -1,0 +1,176 @@
+<!-- Stop your guy from running off the screen
+Put the goblin in a random spot
+COnsolidate any code you can
+Find a different background
+Add a second goblin
+Add something the hero should avoid!
+Add a counter for high score (you'll need to create the div or add it to the DOM)
+Post the high score and current score
+Alert the user if they reach the high score.
+Make it better -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Goblin Hunter!!</title>
+</head>
+<body>
+
+	<div id="currentScoreContainer">
+		<p id="currentScore"></p>
+	</div>
+
+<script type="text/javascript">
+
+// create the canvas tag with javascript
+var canvas = document.createElement('canvas');
+
+// create a context for javascript to play inside of
+var context = canvas.getContext('2d');
+
+// give the canvas tag some substance
+canvas.width = 640;
+canvas.height = 480;
+
+// put the canvas element in the document
+document.body.appendChild(canvas);
+
+// create background
+var bgImage = new Image();
+bgImage.src = "background2.jpg";
+
+// create hero
+var hero = new Image();
+hero.src = "hero.png";
+var heroLocation = {
+	x: 310,
+	y: 400
+}
+
+// create goblin1
+var goblin1 = new Image();
+goblin1.src = "monster.png";
+var goblin1Location = {
+	x: 50,
+	y: 300
+}
+
+// create goblin2
+var goblin2 = new Image();
+goblin2.src = "monster.png";
+var goblin2Location = {
+	x: 500,
+	y: 175
+}
+
+// create dragon
+var dragon = new Image();
+dragon.src = "dragon.png";
+var dragonLocation = {
+	x: 220,
+	y: 10
+}
+
+// create variable for current score
+var currentScore = 0;
+
+// array to hold keycodes for keys that are currently pressed down
+var keysDown = [];
+
+// listener for key press
+addEventListener('keydown', function(event){
+	keysDown[event.keyCode] = true;
+});
+
+// listener for key release
+addEventListener('keyup', function(event){
+	delete keysDown[event.keyCode];
+});
+
+// left keycode - 37
+// up keycode- 38
+// right keycode - 39
+// down keycode - 40
+
+// function to move hero, keep hero within canvas borders, reset each goblin upon individual collisions, track & change score
+function update(){
+	if (39 in keysDown && heroLocation.x < (canvas.width - 32)){
+		// move him right
+		heroLocation.x += 10;
+	}
+	if (37 in keysDown && heroLocation.x > 0){
+		// move him left
+		heroLocation.x -= 10;
+	}
+	if (38 in keysDown && heroLocation.y > 0){
+		// move him up
+		heroLocation.y -= 10;
+	}
+	if (40 in keysDown && heroLocation.y < (canvas.height - 32)){
+		// move him down
+		heroLocation.y += 10;
+	}
+	if ((heroLocation.x <= (goblin1Location.x + 32))
+		&& (heroLocation.y <= (goblin1Location.y + 32))
+		&& (goblin1Location.x <= (heroLocation.x + 32))
+		&& (goblin1Location.y <= (heroLocation.y + 32))
+	){
+	resetG1();
+	currentScore = currentScore + 1;
+	}
+	if ((heroLocation.x <= (goblin2Location.x + 32))
+		&& (heroLocation.y <= (goblin2Location.y + 32))
+		&& (goblin2Location.x <= (heroLocation.x + 32))
+		&& (goblin2Location.y <= (heroLocation.y + 32))
+	){
+	resetG2();
+	currentScore = currentScore + 1;
+	}
+	if ((heroLocation.x <= (dragonLocation.x + 32))
+		&& (heroLocation.y <= (dragonLocation.y + 32))
+		&& (dragonLocation.x <= (heroLocation.x + 32))
+		&& (dragonLocation.y <= (heroLocation.y + 32))
+	){
+	resetDrag();
+	currentScore = currentScore - 5;
+	}
+	document.getElementById("currentScore").innerHTML = "Score: " + currentScore;
+}
+
+// reset function for goblin1
+function resetG1(){
+	goblin1Location.x = (Math.random() * (canvas.width - 32));
+	goblin1Location.y = (Math.random() * (canvas.height - 32));
+}
+
+// reset function for goblin2
+function resetG2(){
+	goblin2Location.x = (Math.random() * (canvas.width - 32));
+	goblin2Location.y = (Math.random() * (canvas.height - 32));
+}
+
+// reset function for dragon
+function resetDrag(){
+	dragonLocation.x = (Math.random() * (canvas.width - 32));
+	dragonLocation.y = (Math.random() * (canvas.height - 32));
+}
+
+// function to draw everything
+function draw(){
+	// this is where we move our hero
+	update();
+	// this is where javascript draws our stuff
+	context.drawImage(bgImage, 0, 0);
+	context.drawImage(hero, heroLocation.x, heroLocation.y);
+	context.drawImage(goblin1, goblin1Location.x, goblin1Location.y);
+	context.drawImage(goblin2, goblin2Location.x, goblin2Location.y);
+	context.drawImage(dragon, dragonLocation.x, dragonLocation.y);
+	requestAnimationFrame(draw);
+}
+
+draw();
+
+</script>
+
+</body>
+</html>
